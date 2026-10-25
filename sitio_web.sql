@@ -1,11 +1,12 @@
+-- AVISO: esquema de referencia sin datos ni cuentas precargadas.
+-- No importar este archivo en un servicio Aiven existente: contiene CREATE/ALTER.
+-- Las ampliaciones del despliegue se revisan por separado; no se ejecutan al arrancar.
+-- Esta propuesta no modifica ninguna base de datos.
+
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 03-09-2026 a las 23:02:01
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +19,6 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `sitio_web`
 --
 
 -- --------------------------------------------------------
@@ -50,12 +50,9 @@ CREATE TABLE `noticias` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `noticias`
+-- Datos de ejemplo omitidos: este archivo solo conserva la estructura.
 --
 
-INSERT INTO `noticias` (`idNoticia`, `titulo`, `imagen`, `texto`, `fecha`, `idUser`) VALUES
-(3, 'Los adolescentes chinos que consumen fármacos para adormecer la mente y \"escapar de la realidad\"', 'uploads/noticias/ae6d207af2a625bc2d4b92031097f075.webp', 'A los 14 años, Xiaomei*, una estudiante de alto rendimiento de una provincia costera de China, ingirió una sobredosis de un medicamento para la tos.\r\n\r\nQuería impresionar a un chico mayor que le había dicho que aquello la ayudaría a relajarse.\r\n\r\nLas pastillas solo se vendían con receta médica, pero ella logró comprarlas por internet.\r\n\r\nAl principio, notó que le provocaban un ligero mareo.\r\n\r\nSin embargo, pronto se enganchó a esa sensación de leve entumecimiento que para ella suponía un breve respiro frente a la presión de los exámenes que se avecinaban.', '2026-09-03', 3),
-(4, 'Por qué han disminuido tan drásticamente las muertes por sobredosis de fentanilo en EE.UU.', 'uploads/noticias/65c873e225dca9d0b32bc591c5c19855.webp', 'Durante 15 años, las muertes por fentanilo en Estados Unidos se mantuvieron en ascenso. Y luego, hacia mediados de 2023, se desplomaron repentinamente.\r\n\r\nPara finales de 2024, la cifra había caído más de un tercio.\r\n\r\nEl fenómeno no ocurrió solo en EE.UU; las muertes también se desplomaron en Canadá, lo que es una noticia fantástica.\r\n\r\nPero no deja de resultar inquietante que los investigadores no tengan certezas sobre la causa que llevó a este descenso tan repentino y tan marcado. No hubo ningún gran avance médico ni una iniciativa nacional para crear más centros de rehabilitación.\r\n\r\nEso llevó al equipo de Keith Humphries, profesor de la Universidad de Stanford, en California, a investigar las posibles causas y publicar un estudio exponiendo sus hipótesis sobre lo que realmente frenó esas sobredosis mortales y si es probable que la situación se mantenga así.', '2026-09-03', 3);
 
 -- --------------------------------------------------------
 
@@ -75,11 +72,9 @@ CREATE TABLE `users_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `users_data`
+-- Datos de ejemplo omitidos: este archivo solo conserva la estructura.
 --
 
-INSERT INTO `users_data` (`idUser`, `nombre`, `apellidos`, `email`, `telefono`, `fecha_nacimiento`, `direccion`, `sexo`) VALUES
-(3, 'alexis', 'ramirez', 'alexisramireztrd@gmail.com', '632102853', '1990-01-06', 'CALLE ANA MARIA MATUTE, 18', 'masculino');
 
 -- --------------------------------------------------------
 
@@ -96,11 +91,9 @@ CREATE TABLE `users_login` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `users_login`
+-- Datos de ejemplo omitidos: este archivo solo conserva la estructura.
 --
 
-INSERT INTO `users_login` (`idLogin`, `idUser`, `usuario`, `password`, `rol`) VALUES
-(3, 3, 'alexadmin', '$2y$10$ofAWnJW.1DOpnszmQgY5.eL2/GR0qI6z86yzUZ4X..wgp1iP9VtM2', 'admin');
 
 --
 -- Índices para tablas volcadas

@@ -1,16 +1,15 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/config/conexion.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/includes/auth.php';
 
 $campos = ['nombre', 'apellidos', 'email', 'telefono', 'fecha_nacimiento', 'direccion', 'sexo', 'usuario'];
 $datos = array_fill_keys($campos, '');
 $errores = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrfValid('registro', $_POST['csrf_token'] ?? null)) {
+        $errores[] = 'La solicitud no es válida. Recarga la página e inténtalo de nuevo.';
+    }
     foreach ($campos as $campo) {
         $datos[$campo] = trim((string) ($_POST[$campo] ?? ''));
     }
@@ -47,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($datos['usuario'] !== '' && !preg_match('/^[A-Za-z0-9_]{3,30}$/', $datos['usuario'])) {
         $errores[] = 'El nombre de usuario debe tener entre 3 y 30 caracteres y solo puede contener letras, números y guion bajo, sin espacios.';
     }
-    if ($contrasena !== '' && mb_strlen($contrasena, 'UTF-8') < 6) {
-        $errores[] = 'La contraseña debe tener al menos 6 caracteres.';
+    if ($contrasena !== '' && mb_strlen($contrasena, 'UTF-8') < 8) {
+        $errores[] = 'La contraseña debe tener al menos 8 caracteres.';
     }
     if ($datos['sexo'] !== '' && !in_array($datos['sexo'], ['femenino', 'masculino', 'otro'], true)) {
         $errores[] = 'El sexo indicado no es válido.';
@@ -96,6 +95,7 @@ require __DIR__ . '/includes/header.php';
             <p class="alert alert-error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endforeach; ?>
         <form method="post" action="registro.php">
+            <input type="hidden" name="csrf_token" value="<?= e(csrfToken('registro')) ?>">
             <div class="form-grid">
                 <label>Nombre<input name="nombre" required value="<?= htmlspecialchars($datos['nombre'], ENT_QUOTES, 'UTF-8') ?>"></label>
                 <label>Apellidos<input name="apellidos" required value="<?= htmlspecialchars($datos['apellidos'], ENT_QUOTES, 'UTF-8') ?>"></label>

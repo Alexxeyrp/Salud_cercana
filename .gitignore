@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.log
+.vercel/
+node_modules/
+vendor/
+.qodo/
+test_conexion.php
+test_*.php
+work/
+outputs/

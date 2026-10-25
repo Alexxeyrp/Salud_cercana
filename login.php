@@ -1,10 +1,6 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/config/conexion.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/includes/auth.php';
 
 $error = '';
 $usuario = '';
@@ -15,7 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = trim((string) ($_POST['usuario'] ?? ''));
     $contrasena = (string) ($_POST['password'] ?? '');
 
-    if ($usuario === '' || $contrasena === '') {
+    if (!csrfValid('login', $_POST['csrf_token'] ?? null)) {
+        $error = 'La solicitud no es válida. Recarga la página e inténtalo de nuevo.';
+    } elseif ($usuario === '' || $contrasena === '') {
         $error = 'Usuario y contraseña son obligatorios.';
     } else {
         $consulta = $pdo->prepare('SELECT idUser, usuario, password, rol FROM users_login WHERE usuario = ?');
@@ -47,6 +45,7 @@ require __DIR__ . '/includes/header.php';
         <?php if ($mensaje): ?><p class="alert alert-success"><?= htmlspecialchars($mensaje, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
         <?php if ($error): ?><p class="alert alert-error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
         <form method="post" action="login.php">
+            <input type="hidden" name="csrf_token" value="<?= e(csrfToken('login')) ?>">
             <label>Usuario<input name="usuario" required value="<?= htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8') ?>"></label>
             <label>Contraseña<input name="password" type="password" required></label>
             <button class="button" type="submit">Entrar</button>
