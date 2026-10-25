@@ -1,8 +1,21 @@
 <?php
 declare(strict_types=1);
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/session.php';
+
+// Recheck roles so a revoked administrator loses access on the next request.
+if (!empty($_SESSION['idUser'])) {
+    $accountQuery = $pdo->prepare('SELECT usuario, rol FROM users_login WHERE idUser = ?');
+    $accountQuery->execute([(int) $_SESSION['idUser']]);
+    $activeAccount = $accountQuery->fetch();
+    if (!$activeAccount) {
+        $_SESSION = [];
+        session_regenerate_id(true);
+    } else {
+        $_SESSION['usuario'] = $activeAccount['usuario'];
+        $_SESSION['rol'] = $activeAccount['rol'];
+    }
 }
 
 function e(mixed $value): string

@@ -1,10 +1,6 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/config/conexion.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/includes/auth.php';
 
 $mensaje = $_SESSION['flash'] ?? '';
 unset($_SESSION['flash']);

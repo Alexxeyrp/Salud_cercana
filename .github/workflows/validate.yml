@@ -1,0 +1,71 @@
+name: Validate PHP and MySQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php84:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: fixture-only-ci-password
+          MYSQL_DATABASE: salud_test_ci
+          MYSQL_USER: salud_fixture
+          MYSQL_PASSWORD: fixture-only-ci-password
+        ports:
+          - 13318:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -pfixture-only-ci-password"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    env:
+      APP_ENV: local
+      SALUD_TEST_DB: '1'
+      DB_HOST: 127.0.0.1
+      DB_PORT: '13318'
+      DB_NAME: salud_test_ci
+      DB_USER: salud_fixture
+      DB_PASSWORD: fixture-only-ci-password
+      DB_SSL_MODE: disabled
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, pdo_sqlite, mbstring, fileinfo, curl, openssl
+          coverage: none
+      - name: Lint and isolated checks
+        run: |
+          find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+          php tests/database_config.php
+          php tests/images.php
+          php tests/images_http.php
+          php tests/router_shutdown.php
+          php tests/session_mysql.php
+          php tests/e2e_setup.php
+          php scripts/preflight.php --database
+      - name: HTTP flows across two processes
+        run: |
+          php -d display_errors=0 -d post_max_size=4M -d upload_max_filesize=3M -S 127.0.0.1:18081 api/index.php > "$RUNNER_TEMP/salud-http-a.log" 2>&1 &
+          server_a=$!
+          php -d display_errors=0 -d post_max_size=4M -d upload_max_filesize=3M -S 127.0.0.1:18082 api/index.php > "$RUNNER_TEMP/salud-http-b.log" 2>&1 &
+          server_b=$!
+          trap 'kill "$server_a" "$server_b" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:18081/css/style.css -o /dev/null && curl -fsS http://127.0.0.1:18082/css/style.css -o /dev/null; then break; fi
+            sleep 1
+          done
+          php tests/e2e.php http://127.0.0.1:18081 http://127.0.0.1:18082
