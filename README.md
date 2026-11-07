@@ -4,6 +4,8 @@ Aplicación web desarrollada como proyecto final del módulo de PHP del Máster 
 
 El proyecto integra interfaz, lógica de servidor y base de datos relacional para poner en práctica un flujo completo de desarrollo web: registro, autenticación, autorización por roles y operaciones de creación, consulta, edición y eliminación (CRUD).
 
+> **Despliegue:** revisa el [estado actual, pruebas y mantenimiento](docs/DESPLIEGUE.md). Aún no hay URL pública HTTPS verificada. Hay un paquete preparado para alojamiento PHP/MySQL con disco persistente; los preparativos Vercel anteriores se conservan.
+
 ## Funcionalidades
 
 | Perfil             | Qué puede hacer                                                                                                                                                                                    |
@@ -41,6 +43,8 @@ La aplicación está escrita sin frameworks y no necesita instalar dependencias 
 
 ## Cómo ejecutar el proyecto en local
 
+Para la preparación de Vercel Hobby, los cambios y comprobaciones y los bloqueos pendientes de sesiones e imágenes, consulta [el informe de despliegue](docs/VERCEL.md). La configuración no implica que la aplicación completa esté lista para producción serverless.
+
 ### 1. Preparar el entorno
 
 Necesitas XAMPP con Apache, MySQL/MariaDB y PHP 8.0 o superior. El volcado SQL incluido se generó en un entorno con PHP 8.2.12.
@@ -72,11 +76,11 @@ Abre [config/conexion.php](config/conexion.php). La cadena de conexión actual e
 "mysql:host=localhost;port=3307;dbname=sitio_web;charset=utf8mb4"
 ```
 
-**El proyecto utiliza actualmente el puerto 3307.** Comprueba el puerto de MySQL en tu instalación de XAMPP. Si utiliza el 3306, cambia únicamente `port=3307` por `port=3306` en esa cadena.
+**El puerto local por defecto es 3307.** Si MySQL utiliza otro puerto, configura `DB_PORT` en el entorno del proceso PHP.
 
-Las credenciales por defecto son el usuario `root` y una contraseña vacía. Si tu instalación utiliza otras, configura `DB_USER` y `DB_PASSWORD` en el entorno del proceso PHP o adapta los valores por defecto de `$user` y `$password` en ese archivo para tu entorno local.
+Las credenciales locales por defecto son el usuario `root` y una contraseña vacía. Si tu instalación utiliza otras, configura `DB_USER` y `DB_PASSWORD` en el entorno del proceso PHP; no escribas credenciales reales en el código.
 
-Aunque el archivo declara variables para `DB_HOST` y `DB_NAME`, la cadena de conexión actual tiene el servidor y el nombre de base de datos escritos directamente. Si necesitas cambiarlos, edita también esa cadena. El proyecto no carga archivos `.env` automáticamente.
+La cadena de conexión utiliza `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD`. Para un servidor remoto se exige TLS con CA y verificación de certificado: configura `DB_SSL_CA` con una ruta legible o `DB_SSL_CA_BASE64` con la CA pública codificada. En Vercel las cinco variables de conexión son obligatorias. El proyecto no carga archivos `.env` automáticamente; [.env.example](.env.example) documenta las variables sin credenciales.
 
 ### 4. Abrir la aplicación
 

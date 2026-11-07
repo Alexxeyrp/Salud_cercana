@@ -1,0 +1,20 @@
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# These directories and files are never public resources.
+RewriteRule ^(?:config|includes|api|docs|scripts|tests|\.git|\.qodo|\.vercel)(?:/|$) - [F,L,NC]
+RewriteRule (?:^|/)(?:\.|test_|.*_test\.php$) - [F,L,NC]
+RewriteRule \.(?:sql(?:\.gz)?|pem|key|crt|cer|p12|pfx|ini|log|bak|zip|json|md)$ - [F,L,NC]
+</IfModule>
+
+<FilesMatch "(?i)(^\.|\.(sql|gz|pem|key|crt|cer|p12|pfx|ini|log|bak|zip|json|md)$|^test_|_test\.php$)">
+Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
