@@ -1,0 +1,18 @@
+
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.9.0",
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    { "src": "/", "dest": "/api/index.php" },
+    { "src": "/(index|login|logout|registro|perfil|noticias|crear_noticia|citaciones|usuarios-administracion|noticias-administracion|citaciones-administracion)\\.php", "dest": "/api/index.php" },
+    { "src": "/css/style\\.css", "dest": "/css/style.css" },
+    { "src": "/js/script\\.js", "dest": "/js/script.js" },
+    { "src": "/uploads/noticias/([a-f0-9]{32}\\.(?:jpg|png|webp))", "dest": "/uploads/noticias/$1" },
+    { "src": "/(.*)", "status": 404 }
+  ]
+}

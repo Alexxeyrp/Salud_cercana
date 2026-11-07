@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/session.php';
 
 function e(mixed $value): string
 {
@@ -17,6 +15,18 @@ function flash(string $message): void
 
 function requireLogin(): void
 {
+    if (!empty($_SESSION['idUser'])) {
+        global $pdo;
+        require_once __DIR__ . '/../config/conexion.php';
+        $account = $pdo->prepare('SELECT rol FROM users_login WHERE idUser = ?');
+        $account->execute([(int) $_SESSION['idUser']]);
+        $role = $account->fetchColumn();
+        if ($role === false) {
+            unset($_SESSION['idUser'], $_SESSION['usuario'], $_SESSION['rol']);
+        } else {
+            $_SESSION['rol'] = $role;
+        }
+    }
     if (empty($_SESSION['idUser'])) {
         flash('Debes iniciar sesión para acceder a esta página.');
         header('Location: login.php');
